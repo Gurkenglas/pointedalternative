@@ -77,7 +77,7 @@ instance PointedAlternative Maybe Identity where
   embed = Just . runIdentity
 
 instance PointedAlternative [] NE.NonEmpty where
-  coerceToNonempty = uncurry (NE.:|) . fromJust . uncons
+  coerceToNonempty (x:xs) = x NE.:| xs
   embed = NE.toList
 
 -- Using IdentityT feels more mathematically correct and would allow the fundep g -> f, but introduces lots of wraps. Hmm.
