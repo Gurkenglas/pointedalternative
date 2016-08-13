@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, UndecidableInstances #-}
+
 module Control.Alternative.Pointed
     ( PointedAlternative
     , someLazy
@@ -12,9 +14,15 @@ module Control.Alternative.Pointed
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans.Identity
 import qualified Data.List.NonEmpty as NE
-import Control.Monad.State
+import Control.Monad.Trans.State
 
-import Data.Coerce
+import Control.Applicative
+import Control.Monad.Identity
+import Control.Monad
+import Data.Maybe
+import Control.Monad.Trans.Identity
+import Data.List
+import Data.Foldable
 
 -- | An alternative functor and something without its empty.
 --
@@ -85,5 +93,5 @@ instance (Monad f, Traversable f, Monad g, Traversable g, PointedAlternative f g
 -}
 
 instance (PointedAlternative f g, MonadPlus f) => PointedAlternative (StateT s f) (StateT s g) where
-  coerceToNonempty = coerce $ (.) coerceToNonempty
-  embed            = coerce $ (.) embed
+  coerceToNonempty = StateT . (.) coerceToNonempty . runStateT
+  embed            = StateT . (.) embed            . runStateT
