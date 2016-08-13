@@ -81,7 +81,7 @@ instance PointedAlternative [] NE.NonEmpty where
   embed = NE.toList
 
 -- Using IdentityT feels more mathematically correct and would allow the fundep g -> f, but introduces lots of wraps. Hmm.
-instance Monad m => PointedAlternative (MaybeT m) (IdentityT m) where
+instance (Functor m, Monad m) => PointedAlternative (MaybeT m) (IdentityT m) where
   coerceToNonempty = IdentityT . liftM fromJust . runMaybeT
   embed = MaybeT . liftM Just . runIdentityT
 
